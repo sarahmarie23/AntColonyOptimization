@@ -12,14 +12,28 @@ public class AdjacencyList {
         adjacencyList = new HashMap<>();
     }
 
-    public void addEdge(int u, int v, int distance) {
-        List<Pair<Integer, Integer>> neighbors = adjacencyList.getOrDefault(u, new ArrayList<>());
-        neighbors.add(new Pair<>(v, distance));
-        adjacencyList.put(u, neighbors);
+    public void addEdge(int node1, int node2, int distance) {
+        List<Pair<Integer, Integer>> neighbors = adjacencyList.getOrDefault(node1, new ArrayList<>());
+        neighbors.add(new Pair<>(node2, distance));
+        adjacencyList.put(node1, neighbors);
     }
 
-    public List<Pair<Integer, Integer>> getNeighbors(int vertex) {
+    public List<Pair<Integer, Integer>> getNeighborsAndDistances(int vertex) {
         return adjacencyList.getOrDefault(vertex, new ArrayList<>());
     }
 
+    public boolean hasEdge(int node1, int node2) {
+        if (adjacencyList.containsValue(node1)) {
+            if (adjacencyList.getValue(node1).stream().anyMatch(e -> getKey() == node2)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Map<Integer, List<Pair<Integer, Integer>>> getAdjacencyList() {
+        return adjacencyList;
+    }
+
 }
+
