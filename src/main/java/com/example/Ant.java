@@ -10,6 +10,7 @@ import java.util.Set;
 public class Ant {
     private List<Integer> visitedCities; // all the cities visited by the ant
     private Set<Integer> unvisitedCities; // all unvisited cities
+    private Set<Integer> unvisitedNeighbors; // unvisited cities that are neighbors
     private int currCity; // ant's current location
     private HashMap<Integer, Integer> distances; // known cities and distances
     private PheromoneTrail trail; // pheromone trail that all ants update
@@ -22,10 +23,16 @@ public class Ant {
     private int currentBestDistance; // current best distance found by the ant
 
 
-    public Ant(Graph graph, int initialCity) {
+    public Ant(Graph graph, AdjacencyList adjacencyList, int initialCity) {
         visitedCities = new ArrayList<>();
         unvisitedCities = new HashSet<Integer>(graph.getCities());
         unvisitedCities.remove(Integer.valueOf(initialCity)); // don't need the first city
+        unvisitedNeighbors = new HashSet<>();
+        for (Integer city : unvisitedCities) {
+            if (adjacencyList.isNeighbor(currCity, city)) {
+                unvisitedNeighbors.add(city);
+            }
+        }
         currCity = initialCity;
         
         distances = new HashMap<>();
@@ -42,5 +49,14 @@ public class Ant {
 
     public List<Integer> getPath() {
         return path;
+    }
+    // finish this next
+    public void selectNextCity() {
+        double[] probabilities = new double[unvisitedNeighbors.size()];
+
+        for (Integer city : unvisitedNeighbors) {
+            double pheromone = trail.getPheromoneLevel(currCity, city);
+            
+        }
     }
 }

@@ -19,12 +19,15 @@ public class PheromoneTrail {
         }
     }
 
+    public double getPheromoneLevel(int node1, int node2) {
+        return pheromoneMatrix[node1][node2];
+    }
+
     public double[][] getPheromoneMatrix() {
         return pheromoneMatrix;
     }
 
     public void updatePheromoneMatrix(Ant ant) { // do this when the ant reaches the destination
-        
         
         // depositing pheromone
         for (int i = 0; i < ant.getPath().size() - 1; i++) {

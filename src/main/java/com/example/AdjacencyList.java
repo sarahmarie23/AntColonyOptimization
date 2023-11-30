@@ -78,11 +78,25 @@ public class AdjacencyList {
         return -1;
     }
 
+    public boolean isNeighbor(int node1, int node2) {
+        if (!adjacencyList.containsKey(node1)) {
+            return false;
+        }
+        for (Pair<Integer, Integer> neighbor : adjacencyList.get(node1)) {
+            int neighborID = neighbor.getKey();
+
+            if (neighborID == node2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isEmpty() {
         if (adjacencyList.isEmpty()) {
             return true;
         }
-        
+
         return false;
     }
 
