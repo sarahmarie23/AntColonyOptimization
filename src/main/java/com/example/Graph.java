@@ -1,6 +1,7 @@
 package com.example;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +23,23 @@ public class Graph {
         return adjacencyList.keySet();
     }
 
-    public List<Pair<Integer, Integer>> getNeighbors(int vertex) {
-        return adjacencyList.get(vertex);
+    public List<Pair<Integer, Integer>> getNeighbors(int node) {
+        return adjacencyList.getOrDefault(node, new ArrayList<>());
+    }
+
+    public List<Pair<Integer, Integer>> getNeighborsAndDistances(int node) {
+        return adjacencyList.get(node);
+    }
+
+    public int getDistance(int node1, int node2) {
+        List<Pair<Integer, Integer>> neighbors = adjacencyList.get(node1);
+        if (neighbors != null) {
+            for (Pair<Integer, Integer> neighbor : neighbors) {
+                if (neighbor.getKey() == node2) {
+                    return neighbor.getValue();
+                }
+            }
+        }
+        return -1;
     }
 }

@@ -1,11 +1,14 @@
 package com.example;
 
-import static com.example.Constants.*;
+import java.util.List;
+
 
 public class PheromoneTrail {
+    private Graph graph;
     private double[][] pheromoneMatrix;
 
     public PheromoneTrail(Graph graph) {
+        this.graph = graph;
         initializePheromoneMatrix(graph);
     }
 
@@ -14,7 +17,7 @@ public class PheromoneTrail {
 
         for (int i = 0; i < graph.getNumVertices(); i++) {
             for (int j = 0; j < graph.getNumVertices(); j++) {
-                pheromoneMatrix[i][j] = INITIAL_PHEROMONE_VALUE;
+                pheromoneMatrix[i][j] = Constants.INITIAL_PHEROMONE_VALUE;
             }
         }
     }
@@ -27,15 +30,28 @@ public class PheromoneTrail {
         return pheromoneMatrix;
     }
 
-    public void updatePheromoneMatrix(Ant ant) { // do this when the ant reaches the destination
-        
-        // depositing pheromone
-        for (int i = 0; i < ant.getPath().size() - 1; i++) {
-            int node1 = ant.getPath().get(i);
-            int node2 = ant.getPath().get(i + 1);
-            pheromoneMatrix[node1][node2] += Constants.PHEROMONE_CONCENTRATION;
-            pheromoneMatrix[node2][node1] += Constants.PHEROMONE_CONCENTRATION;
+    public void updatePheromoneMatrix(Ant[] ants) { // do this when all ants have reached the end
+        // pheromone evaporation
+        for (int i = 0; i < graph.getNumVertices(); i++) {
+            for (int j = 0; j < graph.getNumVertices(); j++) {
+                pheromoneMatrix[i][j] *= (1 - Constants.EVAPORATION_RATE);
+            }
         }
 
+        // pheromone deposition
+        for (Ant ant : ants) {
+            double deposition = Constants.DECOMPOSITION_CONSTANT/ant.getTotalDistance(); // TODO: calc getTotalDistance during ant traversal
+
+            List<Integer> path = ant.getPath();
+        
+            // update pheromone matrix for edges that ant visited
+            for (int i = 0; i < path.size() - 1; i++) {
+                int node1 = path.get(i);
+                int node2 = path.get(i + 1);
+
+                pheromoneMatrix[node1][node2] += deposition;
+                pheromoneMatrix[node2][node1] += deposition;
+            }
+        }
     }
 }
