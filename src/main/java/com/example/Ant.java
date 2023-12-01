@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -28,27 +29,27 @@ public class Ant {
 
     public Ant(Graph graph, AdjacencyList adjacencyList, int initialCity) {
         this.graph = graph;
-        visitedCities = new ArrayList<>();
-        unvisitedCities = new HashSet<Integer>(graph.getCities());
-        unvisitedCities.remove(Integer.valueOf(initialCity)); // don't need the first city
-        unvisitedNeighbors = new HashSet<>();
+        this.visitedCities = new ArrayList<>();
+        this.unvisitedCities = new HashSet<Integer>(graph.getCities());
+        this.unvisitedCities.remove(Integer.valueOf(initialCity)); // don't need the first city
+        this.unvisitedNeighbors = new HashSet<>();
         for (Integer city : unvisitedCities) {
             if (adjacencyList.isNeighbor(currCity, city)) {
                 unvisitedNeighbors.add(city);
             }
         }
-        currCity = initialCity;
+        this.currCity = initialCity;
         
-        distances = new HashMap<>();
-        trail = new PheromoneTrail(graph);
-        path = new ArrayList<>();
-        totalDistance = 0;
+        this.distances = new HashMap<>();
+        this.trail = new PheromoneTrail(graph);
+        this.path = new ArrayList<>();
+        this.totalDistance = 0;
 
-        random = new Random();
-        alpha = Constants.ALPHA;
-        beta = Constants.BETA;
-        globalBestDistance = Integer.MAX_VALUE;
-        currentBestDistance = Integer.MAX_VALUE;
+        this.random = new Random();
+        this.alpha = Constants.ALPHA;
+        this.beta = Constants.BETA;
+        this.globalBestDistance = Integer.MAX_VALUE;
+        this.currentBestDistance = Integer.MAX_VALUE;
     }
 
     public List<Integer> getPath() {
@@ -59,48 +60,38 @@ public class Ant {
         return totalDistance;
     }
 
-    public void move(int node1, int node2) {
-        totalDistance += graph.getDistance(node1, node2);
+    public List<Pair<Integer, Integer>> getNeighborsAndDistances(int node) {
+        return graph.getNeighborsAndDistances(node);
     }
-    /* 
-    // finish this next, still working on it
-    public void selectNextCity() {
-        double[] probabilities = new double[unvisitedNeighbors.size()];
-        
-        // Calculate probabilities for each unvisited neighbor
-        int index = 0;
-        for (Integer city : unvisitedNeighbors) {
-            double pheromoneLevel = trail.getPheromoneLevel(currCity, city);
-            double distance = graph.getDistance(currCity, city);
-            
-            double probability = Math.pow(pheromoneLevel, alpha) * Math.pow(1 / distance, beta);
-            probabilities[index++] = probability;
-        }
 
-        // Normalize probabilities
-        double sum = 0;
-        for (double probability : probabilities) {
-            sum += probability;
-        }
-        
-        for (int i = 0; i < probabilities.length; i++) {
-            probabilities[i] /= sum;
-        }
-
-        // Select the next city using weighted random selection
-        int nextCityIndex = weightedRandomSelection(probabilities);
-        Integer nextCity = unvisitedNeighbors.toArray()[nextCityIndex];
-
-        // Update ant's state
-        visitedCities.add(nextCity);
-        unvisitedCities.remove(nextCity);
-        unvisitedNeighbors.clear();
-        for (Integer neighbor : graph.getNeighbors(nextCity)) {
-            if (unvisitedCities.contains(neighbor)) {
-                unvisitedNeighbors.add(neighbor);
-            }
-        }
-        
+    public void move(int node1, int node2) { // moving from node1 to node2
+        this.currCity = node2; // update currCity
+        this.totalDistance += graph.getDistance(node1, node2); // update total distance
+        visitedCities.add(node2); // add the next node to the visitedCities
     }
-    */
+     
+    public void selectNextCity(int currCity) {
+        Map<Integer, Double> nodeProbabilities = new HashMap<>(); 
+        List<Pair<Integer, Integer>> neighborsAndDistances = getNeighborsAndDistances(currCity);
+
+        double probabilitySummation = 0.0;
+
+        for (Pair<Integer, Integer> pair : neighborsAndDistances) {
+            Integer neighbor = pair.getKey();
+            Integer distance = pair.getValue();
+
+            double currPheromone = trail.getPheromoneLevel(currCity, neighbor); // tau
+            double currQuality = 1.0 / distance; // eta; favors shorter paths
+            double numerator = (Math.pow(currPheromone, alpha) * Math.pow(currQuality, beta));
+            probabilitySummation += numerator;
+
+            nodeProbabilities.put(neighbor, numerator);
+        }
+
+        for (Map.Entry<Integer, Double> entry : nodeProbabilities.entrySet()) {
+            int neighbor = entry.getKey();
+            double normalizedProbability = entry.getValue() / probabilitySummation;
+            nodeProbabilities.put(neighbor, normalizedProbability);
+        }
+    }
 }
