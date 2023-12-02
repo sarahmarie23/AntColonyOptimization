@@ -16,6 +16,8 @@ public class Ant {
     private Set<Integer> unvisitedCities; // all unvisited cities
     private Set<Integer> unvisitedNeighbors; // unvisited cities that are neighbors
     private int currCity; // ant's current location
+    private int initialNode;
+    private int destination;
     private HashMap<Integer, Integer> distances; // known cities and distances
     private PheromoneTrail trail; // pheromone trail that all ants update
     private List<Integer> path; // the chosen list of nodes the ant has taken 
@@ -27,19 +29,20 @@ public class Ant {
     private int currentBestDistance; // current best distance found by the ant
 
 
-    public Ant(Graph graph, AdjacencyList adjacencyList, int initialCity) {
+    public Ant(Graph graph, AdjacencyList adjacencyList, int initialNode, int destination) {
         this.graph = graph;
         this.visitedCities = new ArrayList<>();
         this.unvisitedCities = new HashSet<Integer>(graph.getCities());
-        this.unvisitedCities.remove(Integer.valueOf(initialCity)); // don't need the first city
+        this.unvisitedCities.remove(Integer.valueOf(initialNode)); // don't need the first city
         this.unvisitedNeighbors = new HashSet<>();
         for (Integer city : unvisitedCities) {
             if (adjacencyList.isNeighbor(currCity, city)) {
                 unvisitedNeighbors.add(city);
             }
         }
-        this.currCity = initialCity;
-        
+        this.currCity = initialNode;
+        this.initialNode = initialNode;
+        this.destination = destination;
         this.distances = new HashMap<>();
         this.trail = new PheromoneTrail(graph);
         this.path = new ArrayList<>();
@@ -60,6 +63,10 @@ public class Ant {
         return totalDistance;
     }
 
+    public int getCurrCity() {
+        return currCity;
+    }
+
     public List<Pair<Integer, Integer>> getNeighborsAndDistances(int node) {
         return graph.getNeighborsAndDistances(node);
     }
@@ -70,7 +77,8 @@ public class Ant {
         visitedCities.add(node2); // add the next node to the visitedCities
     }
      
-    public void selectNextCity(int currCity) {
+    public int selectNextCity(int currCity) {
+        // get probabilities
         Map<Integer, Double> nodeProbabilities = new HashMap<>(); 
         List<Pair<Integer, Integer>> neighborsAndDistances = getNeighborsAndDistances(currCity);
 
@@ -93,5 +101,23 @@ public class Ant {
             double normalizedProbability = entry.getValue() / probabilitySummation;
             nodeProbabilities.put(neighbor, normalizedProbability);
         }
+
+        // choose the next city, with a touch of randomness
+        int selectedCity = -1;
+        double randomValue = Math.random();
+        double accumulatedProbability = 0.0;
+        
+        for (Map.Entry<Integer, Double> entry : nodeProbabilities.entrySet()) {
+            int neighbor = entry.getKey();
+            double probability = entry.getValue();
+
+            accumulatedProbability += probability;
+
+            if (randomValue <= accumulatedProbability) {
+                selectedCity = neighbor;
+                break;
+            }
+        }
+        return selectedCity;
     }
 }
