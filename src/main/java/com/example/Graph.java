@@ -2,17 +2,24 @@ package com.example;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class Graph {
-    private Map<Integer, List<Pair<Integer, Integer>>> adjacencyList; // [node, <neighbor, distance>]
-
-    String fileName = "distances.txt";
+    private final Map<Integer, List<Pair<Integer, Integer>>> adjacencyList; // [node, <neighbor, distance>]
+    private final String fileName;
 
     public Graph(String fileName) throws IOException {
-        this.adjacencyList = AdjacencyListReader.readAdjacencyList(fileName);
+        this.fileName = fileName;
+        this.adjacencyList = new HashMap<>();
+
+        try {
+            AdjacencyListReader.readAdjacencyList(fileName, adjacencyList);
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading file: " + fileName, e);
+        }
     }
 
     public int getNumVertices() {
