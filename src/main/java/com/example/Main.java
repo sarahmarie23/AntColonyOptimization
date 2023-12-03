@@ -17,6 +17,10 @@ public class Main {
             ants[i] = new Ant(graph, adjacencyList, source, destination);
         }
 
+        GraphTraversal graphTraversal = new GraphTraversal(graph, destination);
+        PheromoneTrail pheromoneTrail = new PheromoneTrail(graph.getNumVertices());
+        graphTraversal.sendAntsOnGraph(ants, pheromoneTrail);
+
         // stopping criteria is in GraphTraversal
         
         // stopping criteria will be when a specified percentage of ants are on the best path

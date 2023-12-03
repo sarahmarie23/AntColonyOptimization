@@ -4,19 +4,18 @@ import java.util.List;
 
 
 public class PheromoneTrail {
-    private Graph graph;
+    private int numVertices;
     private double[][] pheromoneMatrix;
 
-    public PheromoneTrail(Graph graph) {
-        this.graph = graph;
-        initializePheromoneMatrix(graph);
+    public PheromoneTrail(int numVertices) {
+        this.numVertices = numVertices;
+        pheromoneMatrix = new double[numVertices][numVertices];
+        initializePheromoneMatrix();
     }
 
-    private void initializePheromoneMatrix(Graph graph) {
-        pheromoneMatrix = new double[graph.getNumVertices()][graph.getNumVertices()];
-
-        for (int i = 0; i < graph.getNumVertices(); i++) {
-            for (int j = 0; j < graph.getNumVertices(); j++) {
+    private void initializePheromoneMatrix() {
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 0; j < numVertices; j++) {
                 pheromoneMatrix[i][j] = Constants.INITIAL_PHEROMONE_VALUE;
             }
         }
@@ -32,8 +31,8 @@ public class PheromoneTrail {
 
     public void updatePheromoneMatrix(Ant[] ants) { // do this when all ants have reached the end
         // pheromone evaporation
-        for (int i = 0; i < graph.getNumVertices(); i++) {
-            for (int j = 0; j < graph.getNumVertices(); j++) {
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 0; j < numVertices; j++) {
                 pheromoneMatrix[i][j] *= (1 - Constants.EVAPORATION_RATE);
             }
         }
