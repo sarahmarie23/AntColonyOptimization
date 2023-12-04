@@ -1,6 +1,7 @@
 package com.example;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,10 +18,20 @@ public class Graph {
 
         try {
             System.out.println(fileName);
-            AdjacencyListReader.readAdjacencyList(fileName, adjacencyList);
+            loadAdjacencyList();
             System.out.println("size is " + adjacencyList.size());
         } catch (IOException e) {
             throw new RuntimeException("Error reading file: " + fileName, e);
+        }
+    }
+
+    private void loadAdjacencyList() throws IOException {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
+            if (inputStream == null) {
+                throw new IOException("File not found: " + fileName);
+            }
+
+            AdjacencyListReader.readAdjacencyList(inputStream, adjacencyList);
         }
     }
 

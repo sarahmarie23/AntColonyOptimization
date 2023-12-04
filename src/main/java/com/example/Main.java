@@ -19,8 +19,7 @@ public class Main {
         System.out.println(destination);
         System.out.println(fileName);
 
-        System.out.println("File Path: " + fileName);
-        /* 
+        
         Graph graph = new Graph(fileName);
         
         AdjacencyList adjacencyList = new AdjacencyList();
