@@ -10,24 +10,24 @@ public class GraphTraversal {
     }
 
     public void sendAntsOnGraph(Ant[] ants, PheromoneTrail trail) {
-        int bestPathCount = 0;
+        int iterations = 0;
 
-        while (true) {
+        while (iterations < Constants.NUM_ITERATIONS) {
+
             for (Ant ant : ants) {
-                int curr = ant.getCurrCity();
-                while (ant.getCurrCity() != destination) {
+                int curr = ant.getCurrNode();
+
+                while (ant.getCurrNode() != destination) {
                     int next = ant.selectNextCity(curr);
                     ant.move(curr, next);
-                    curr = ant.getCurrCity();
+                    curr = ant.getCurrNode();
                 }
 
-                ant.getTotalDistance();
+                //ant.getTotalDistance(); might use it later
             }
 
-            
-
-
-            
+            trail.updatePheromoneMatrix(ants);
+            iterations++;
         }
     }
 }

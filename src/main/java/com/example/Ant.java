@@ -1,7 +1,5 @@
 package com.example;
 
-import com.example.Graph;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +13,8 @@ public class Ant {
     private List<Integer> visitedCities; // all the cities visited by the ant
     private Set<Integer> unvisitedCities; // all unvisited cities
     private Set<Integer> unvisitedNeighbors; // unvisited cities that are neighbors
-    private int currCity; // ant's current location
+    private int currNode; // ant's current location
+    private int numNodes;
     private int initialNode;
     private int destination;
     private HashMap<Integer, Integer> distances; // known cities and distances
@@ -36,15 +35,16 @@ public class Ant {
         this.unvisitedCities.remove(Integer.valueOf(initialNode)); // don't need the first city
         this.unvisitedNeighbors = new HashSet<>();
         for (Integer city : unvisitedCities) {
-            if (adjacencyList.isNeighbor(currCity, city)) {
+            if (adjacencyList.isNeighbor(currNode, city)) {
                 unvisitedNeighbors.add(city);
             }
         }
-        this.currCity = initialNode;
+        this.currNode = initialNode;
+        this.numNodes = Constants.NUM_VERTICES;
         this.initialNode = initialNode;
         this.destination = destination;
         this.distances = new HashMap<>();
-        this.trail = new PheromoneTrail(graph);
+        this.trail = new PheromoneTrail(numNodes); // need number of nodes
         this.path = new ArrayList<>();
         this.totalDistance = 0;
 
@@ -63,8 +63,8 @@ public class Ant {
         return totalDistance;
     }
 
-    public int getCurrCity() {
-        return currCity;
+    public int getCurrNode() {
+        return currNode;
     }
 
     public List<Pair<Integer, Integer>> getNeighborsAndDistances(int node) {
@@ -72,9 +72,11 @@ public class Ant {
     }
 
     public void move(int node1, int node2) { // moving from node1 to node2
-        this.currCity = node2; // update currCity
+        this.currNode = node2; // update currNode
         this.totalDistance += graph.getDistance(node1, node2); // update total distance
         visitedCities.add(node2); // add the next node to the visitedCities
+        updateBestPath(); // check if we have the best path so far
+        path.add(node2); // add the next node to the path
     }
      
     public int selectNextCity(int currCity) {
@@ -120,6 +122,20 @@ public class Ant {
         }
         return selectedCity;
     }
-    // TODO next
-    public void updateBestPath()
+    
+    public boolean updateBestPath() {
+        boolean updatedBestPath = false;
+
+        if (totalDistance < globalBestDistance) {
+            globalBestDistance = totalDistance;
+            updatedBestPath = true;
+        }
+
+        if (totalDistance < currentBestDistance) {
+            currentBestDistance = totalDistance;
+            updatedBestPath = true;
+        }
+
+        return updatedBestPath;
+    }
 }

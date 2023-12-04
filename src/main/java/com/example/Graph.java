@@ -16,7 +16,9 @@ public class Graph {
         this.adjacencyList = new HashMap<>();
 
         try {
+            System.out.println(fileName);
             AdjacencyListReader.readAdjacencyList(fileName, adjacencyList);
+            System.out.println("size is " + adjacencyList.size());
         } catch (IOException e) {
             throw new RuntimeException("Error reading file: " + fileName, e);
         }
