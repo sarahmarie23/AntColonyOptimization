@@ -78,7 +78,6 @@ public class Ant {
     }
 
     public List<Pair<Integer, Integer>> getNeighborsAndDistances(int node) {
-        System.out.println("the node is "+node);
         return graph.getNeighborsAndDistances(node);
     }
 
@@ -93,7 +92,6 @@ public class Ant {
      
     public int selectNextCity(int currCity) {
         // get unvisited neighbors
-        System.out.println("curr city "+currCity);
         List<Pair<Integer, Integer>> neighborsAndDistances = getNeighborsAndDistances(currCity);
         List<Pair<Integer, Integer>> unvisitedNeighbors = new ArrayList<>();
         
@@ -104,14 +102,13 @@ public class Ant {
                 unvisitedNeighbors.add(pair);
             }
         }
-        System.out.println("size of unvisited neighbors " +unvisitedNeighbors.size());
+
         System.out.println("unvisited neighbors ");
         for (Pair<Integer, Integer> pair : unvisitedNeighbors) {
             Integer neighbor = pair.getKey();
             Integer distance = pair.getValue();
             System.out.println("Neighbor: " + neighbor + ", Distance: " + distance);
         }
-
 
         if (unvisitedNeighbors.isEmpty()) {
             // If no unvisited neighbors, return -1 or handle the case accordingly
