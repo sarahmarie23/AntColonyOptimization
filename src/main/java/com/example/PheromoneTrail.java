@@ -42,12 +42,17 @@ public class PheromoneTrail {
             double deposition = Constants.DECOMPOSITION_CONSTANT/ant.getTotalDistance(); // TODO: calc getTotalDistance during ant traversal
 
             List<Integer> path = ant.getPath();
-        
+            System.out.println("print path");
+            
+            for (Integer i : path) {
+                System.out.println(i);
+            }
+            System.out.println("length "+pheromoneMatrix.length);
             // update pheromone matrix for edges that ant visited
             for (int i = 0; i < path.size() - 1; i++) {
                 int node1 = path.get(i);
                 int node2 = path.get(i + 1);
-
+                System.out.println("node1 " + node1 + " node2 " + node2);
                 pheromoneMatrix[node1][node2] += deposition;
                 pheromoneMatrix[node2][node1] += deposition;
             }

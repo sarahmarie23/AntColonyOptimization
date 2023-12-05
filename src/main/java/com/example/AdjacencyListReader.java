@@ -16,7 +16,6 @@ public class AdjacencyListReader {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(fileName))) {
             String line;
-            List<Pair<Integer, Integer>> neighbors = new ArrayList<>();
             
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(" ");
@@ -24,11 +23,10 @@ public class AdjacencyListReader {
                 int startNode = Integer.parseInt(parts[0]);
                 int neighbor = Integer.parseInt(parts[1]);
                 int distance = Integer.parseInt(parts[2]);
-        
-                neighbors.add(new Pair<>(neighbor, distance));
-                adjacencyList.put(startNode, neighbors);
-            }
 
+                adjacencyList.putIfAbsent(startNode, new ArrayList<>());
+                adjacencyList.get(startNode).add(new Pair<>(neighbor, distance));
+            }
 
         } catch (IOException e) {
             throw new RuntimeException("Error reading file: " + fileName, e);

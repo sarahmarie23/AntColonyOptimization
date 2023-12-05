@@ -18,20 +18,29 @@ public class Main {
         System.out.println(source);
         System.out.println(destination);
         System.out.println(fileName);
-
         
         Graph graph = new Graph(fileName);
-        
-        AdjacencyList adjacencyList = new AdjacencyList();
-        Ant[] ants = new Ant[Constants.NUM_ANTS];
-
-        for (int i = 0; i < Constants.NUM_ANTS; i++) {
-            ants[i] = new Ant(graph, adjacencyList, source, destination);
-        }
 
         GraphTraversal graphTraversal = new GraphTraversal(graph, destination);
         PheromoneTrail pheromoneTrail = new PheromoneTrail(graph.getNumVertices());
-        graphTraversal.sendAntsOnGraph(ants, pheromoneTrail);
+
+        int iterations = 0;
+
+        while (iterations < Constants.NUM_ITERATIONS) {
+            System.out.println("ITERATION #"+iterations);
+            Ant[] ants = new Ant[Constants.NUM_ANTS];
+            AdjacencyList adjacencyList = new AdjacencyList();
+
+            for (int i = 0; i < Constants.NUM_ANTS; i++) {
+                ants[i] = new Ant(graph, adjacencyList, source, destination);
+            }
+
+            graphTraversal.sendAntsOnGraph(ants, pheromoneTrail);
+            pheromoneTrail.updatePheromoneMatrix(ants);
+
+            iterations++;
+        }
+        
         
         // stopping criteria is in GraphTraversal
         

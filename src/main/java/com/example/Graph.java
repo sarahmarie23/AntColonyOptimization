@@ -48,7 +48,7 @@ public class Graph {
     }
 
     public List<Pair<Integer, Integer>> getNeighborsAndDistances(int node) {
-        return adjacencyList.get(node);
+        return adjacencyList.getOrDefault(node, new ArrayList<>());
     }
 
     public int getDistance(int node1, int node2) {
@@ -61,5 +61,22 @@ public class Graph {
             }
         }
         return -1;
+    }
+
+    public void printGraph() {
+        System.out.println("Graph Contents:");
+        for (Map.Entry<Integer, List<Pair<Integer, Integer>>> entry : adjacencyList.entrySet()) {
+            int node = entry.getKey();
+            List<Pair<Integer, Integer>> neighbors = entry.getValue();
+            
+            System.out.print("Node " + node + " is connected to: ");
+            for (Pair<Integer, Integer> neighbor : neighbors) {
+                int neighborNode = neighbor.getKey();
+                int distance = neighbor.getValue();
+                
+                System.out.print("(" + neighborNode + ", Distance: " + distance + ") ");
+            }
+            System.out.println();
+        }
     }
 }

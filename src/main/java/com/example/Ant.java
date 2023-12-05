@@ -35,17 +35,19 @@ public class Ant {
         this.unvisitedCities.remove(Integer.valueOf(initialNode)); // don't need the first city
         this.unvisitedNeighbors = new HashSet<>();
         for (Integer city : unvisitedCities) {
-            if (adjacencyList.isNeighbor(currNode, city)) {
+            if (adjacencyList.isNeighbor(initialNode, city)) {
                 unvisitedNeighbors.add(city);
             }
         }
         this.currNode = initialNode;
         this.numNodes = Constants.NUM_VERTICES;
         this.initialNode = initialNode;
+        visitedCities.add(initialNode);
         this.destination = destination;
         this.distances = new HashMap<>();
         this.trail = new PheromoneTrail(numNodes); // need number of nodes
         this.path = new ArrayList<>();
+        path.add(initialNode);
         this.totalDistance = 0;
 
         this.random = new Random();
@@ -67,7 +69,16 @@ public class Ant {
         return currNode;
     }
 
+    public void clearUnvisitedNeighbors() {
+        this.unvisitedNeighbors.clear();
+    }
+
+    public void clearVisitedCities() {
+        this.visitedCities.clear();
+    }
+
     public List<Pair<Integer, Integer>> getNeighborsAndDistances(int node) {
+        System.out.println("the node is "+node);
         return graph.getNeighborsAndDistances(node);
     }
 
@@ -75,19 +86,49 @@ public class Ant {
         this.currNode = node2; // update currNode
         this.totalDistance += graph.getDistance(node1, node2); // update total distance
         visitedCities.add(node2); // add the next node to the visitedCities
+        unvisitedCities.remove(node2); // remove from unvisitedCities
         updateBestPath(); // check if we have the best path so far
         path.add(node2); // add the next node to the path
     }
      
     public int selectNextCity(int currCity) {
-        // get probabilities
-        Map<Integer, Double> nodeProbabilities = new HashMap<>(); 
+        // get unvisited neighbors
+        System.out.println("curr city "+currCity);
         List<Pair<Integer, Integer>> neighborsAndDistances = getNeighborsAndDistances(currCity);
-
-        double probabilitySummation = 0.0;
+        List<Pair<Integer, Integer>> unvisitedNeighbors = new ArrayList<>();
+        
 
         for (Pair<Integer, Integer> pair : neighborsAndDistances) {
             Integer neighbor = pair.getKey();
+            if (unvisitedCities.contains(neighbor)) { // Assuming unvisitedCities is the set of unvisited nodes
+                unvisitedNeighbors.add(pair);
+            }
+        }
+        System.out.println("size of unvisited neighbors " +unvisitedNeighbors.size());
+        System.out.println("unvisited neighbors ");
+        for (Pair<Integer, Integer> pair : unvisitedNeighbors) {
+            Integer neighbor = pair.getKey();
+            Integer distance = pair.getValue();
+            System.out.println("Neighbor: " + neighbor + ", Distance: " + distance);
+        }
+
+
+        if (unvisitedNeighbors.isEmpty()) {
+            // If no unvisited neighbors, return -1 or handle the case accordingly
+            return -1;
+        }
+
+        unvisitedNeighbors.removeIf(pair -> visitedCities.contains(pair.getKey())); 
+
+        // get probabilities
+        Map<Integer, Double> nodeProbabilities = new HashMap<>(); 
+        double probabilitySummation = 0.0;
+
+        for (Pair<Integer, Integer> pair : unvisitedNeighbors) {
+            Integer neighbor = pair.getKey();
+            if (neighbor == destination) {
+                return destination;
+            }
             Integer distance = pair.getValue();
 
             double currPheromone = trail.getPheromoneLevel(currCity, neighbor); // tau
@@ -103,7 +144,7 @@ public class Ant {
             double normalizedProbability = entry.getValue() / probabilitySummation;
             nodeProbabilities.put(neighbor, normalizedProbability);
         }
-
+        System.out.println("Node probabilities: " + nodeProbabilities);
         // choose the next city, with a touch of randomness
         int selectedCity = -1;
         double randomValue = Math.random();
@@ -117,6 +158,7 @@ public class Ant {
 
             if (randomValue <= accumulatedProbability) {
                 selectedCity = neighbor;
+                System.out.println("Selected next city: " + selectedCity);
                 break;
             }
         }
