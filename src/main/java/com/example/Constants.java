@@ -9,5 +9,5 @@ public class Constants {
     public static final double BETA = 2.0; // controls importance of heuristics, i.e. shorter paths
     public static final int NUM_ANTS = 10;
     public static final int NUM_ITERATIONS = 10;
-    public static final int NUM_VERTICES = 36;
+    public static final int NUM_VERTICES = 10;
 }
