@@ -25,7 +25,7 @@ public class Main {
         int iterations = 0;
 
         while (iterations < Constants.NUM_ITERATIONS) {
-            System.out.println("ITERATION #"+iterations);
+            System.out.print("ITERATION #"+iterations);
             // generate array of ants
             Ant[] ants = new Ant[Constants.NUM_ANTS];
             AdjacencyList adjacencyList = new AdjacencyList();
@@ -38,6 +38,13 @@ public class Main {
             graphTraversal.sendAntsOnGraph(ants, pheromoneTrail);
             pheromoneTrail.updatePheromoneMatrix(ants);
 
+            // get average ant distance
+            double avgDistance = 0.0;
+            for (Ant ant : ants) {
+                avgDistance += ant.getTotalDistance();
+            }
+            avgDistance /= Constants.NUM_ANTS;
+            System.out.println(" avg distance = " + avgDistance);
             iterations++;
         }
         

@@ -102,14 +102,14 @@ public class Ant {
                 unvisitedNeighbors.add(pair);
             }
         }
-
+        /*
         System.out.println("unvisited neighbors ");
         for (Pair<Integer, Integer> pair : unvisitedNeighbors) {
             Integer neighbor = pair.getKey();
             Integer distance = pair.getValue();
             System.out.println("Neighbor: " + neighbor + ", Distance: " + distance);
         }
-
+        */
         if (unvisitedNeighbors.isEmpty()) {
             // If no unvisited neighbors, return -1 or handle the case accordingly
             return -1;
@@ -141,7 +141,7 @@ public class Ant {
             double normalizedProbability = entry.getValue() / probabilitySummation;
             nodeProbabilities.put(neighbor, normalizedProbability);
         }
-        System.out.println("Node probabilities: " + nodeProbabilities);
+        
         // choose the next city, with a touch of randomness
         int selectedCity = -1;
         double randomValue = Math.random();
@@ -155,7 +155,7 @@ public class Ant {
 
             if (randomValue <= accumulatedProbability) {
                 selectedCity = neighbor;
-                System.out.println("Selected next city: " + selectedCity);
+                
                 break;
             }
         }
